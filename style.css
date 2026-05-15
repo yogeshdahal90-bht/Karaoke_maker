@@ -14,7 +14,6 @@ canvas {
     display: block;
 }
 
-/* RECORDING MODE CONTROL DASHBOARD */
 #creator-panel {
     position: absolute;
     top: 50%;
@@ -46,7 +45,6 @@ canvas {
     box-sizing: border-box;
 }
 
-/* INTERFACE UTILITY BUTTONS */
 .studio-btn {
     padding: 12px 24px;
     font-size: 0.8rem;
@@ -78,7 +76,6 @@ canvas {
 
 #upload { display: none; }
 
-/* THE FINAL SCREEN RECORDING STAGE */
 #playback-stage {
     position: absolute;
     top: 0;
@@ -115,7 +112,6 @@ canvas {
     align-items: center;
 }
 
-/* LIVE TIMELINE CAPTURING CUES */
 .active-cue {
     color: #00ffff;
     font-size: 2rem;
@@ -129,7 +125,6 @@ canvas {
     margin-top: 10px;
 }
 
-/* HIGH-END LIQUID NEON PLAYBACK TEXT FOR YOUR OBS CAPTURE */
 .video-rendered-text {
     font-size: 3rem;
     font-weight: 900;

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3js Karaoke Creator Studio</title>
+    <link rel="stylesheet" href="./style.css">
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.136.0/build/three.module.js"
+          }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- MODE 1: THE CREATOR PANEL (Hidden during video recording) -->
+    <div id="creator-panel">
+        <h2 style="color: #00ffff; margin-top: 0; letter-spacing: 2px;">KARAOKE CREATOR STUDIO</h2>
+        <textarea id="raw-lyrics" placeholder="Paste your lyrics here... One line per row."></textarea>
+        
+        <div class="file-selectors">
+            <label for="upload" class="studio-btn upload-btn">1. Choose Audio File</label>
+            <input type="file" id="upload" accept="audio/*">
+            <span id="file-name-display" style="color: #aaa; font-size: 0.8rem; display: block; margin-top: 5px;">No file selected</span>
+        </div>
+
+        <button id="start-sync-btn" class="studio-btn action-btn" style="display:none; margin-top: 15px; width: 100%;">2. Start Sync Session</button>
+    </div>
+
+    <!-- MODE 2: THE PLAYBACK STAGE (What you see when recording your video) -->
+    <div id="playback-stage" style="display: none;">
+        <!-- Dynamic Canvas loaded by Three.js will sit behind this text -->
+        <div id="hud-overlay">
+            <h3 id="song-title">TRACK TRACKER</h3>
+            <div id="lyric-screen">READY...</div>
+            
+            <div id="post-sync-controls" style="display: none;">
+                <p style="color: #ff00ff; font-size: 0.9rem;">Sync Complete!</p>
+                <button id="play-preview-btn" class="studio-btn action-btn">► PLAY FINAL BACK</button>
+            </div>
+        </div>
+        
+        <!-- Discreet instruction bar anchored at the top while logging -->
+        <div id="tap-instruction">Press <strong>SPACEBAR</strong> to line-stamp the lyrics on the beat!</div>
+    </div>
+
+    <script type="module" src="./script.js"></script>
+</body>
+</html>

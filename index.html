@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <!-- MODE 1: THE CREATOR PANEL (Hidden during video recording) -->
+    <!-- MODE 1: THE CREATOR PANEL (Hidden during final playback video recording) -->
     <div id="creator-panel">
         <h2 style="color: #00ffff; margin-top: 0; letter-spacing: 2px;">KARAOKE CREATOR STUDIO</h2>
         <textarea id="raw-lyrics" placeholder="Paste your lyrics here... One line per row."></textarea>
@@ -31,18 +31,20 @@
 
     <!-- MODE 2: THE PLAYBACK STAGE (What you see when recording your video) -->
     <div id="playback-stage" style="display: none;">
-        <!-- Dynamic Canvas loaded by Three.js will sit behind this text -->
         <div id="hud-overlay">
             <h3 id="song-title">TRACK TRACKER</h3>
             <div id="lyric-screen">READY...</div>
             
+            <!-- Safety Save Dashboard Overlay -->
             <div id="post-sync-controls" style="display: none;">
-                <p style="color: #ff00ff; font-size: 0.9rem;">Sync Complete!</p>
-                <button id="play-preview-btn" class="studio-btn action-btn">► PLAY FINAL BACK</button>
+                <p style="color: #ff00ff; font-size: 0.9rem; font-weight: bold;">Sync Complete! Save your work first.</p>
+                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 10px;">
+                    <button id="export-btn" class="studio-btn" style="background: transparent; border: 1px solid #00ffff; color: #00ffff; pointer-events: auto;">💾 DOWNLOAD LRC FILE</button>
+                    <button id="play-preview-btn" class="studio-btn action-btn" style="pointer-events: auto;">► PLAY FINAL BACK</button>
+                </div>
             </div>
         </div>
         
-        <!-- Discreet instruction bar anchored at the top while logging -->
         <div id="tap-instruction">Press <strong>SPACEBAR</strong> to line-stamp the lyrics on the beat!</div>
     </div>
 

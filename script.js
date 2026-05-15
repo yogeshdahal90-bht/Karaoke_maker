@@ -5,13 +5,13 @@ let centerMesh, particles = [];
 let audio, audioURL;
 
 let lyricLines = [];
-let databaseTimeline = []; // Stores objects: { time: seconds, text: "string" }
+let databaseTimeline = []; 
 let currentLineIndex = 0;
-let systemMode = "IDLE"; // IDLE, RECORDING, PLAYBACK
+let systemMode = "IDLE"; 
 const clock = new THREE.Clock();
 
 function init() {
-    // 3D SCENE ARCHITECTURE (A beautiful background matrix)
+    // 3D SCENE ARCHITECTURE
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x020205);
     scene.fog = new THREE.FogExp2(0x020205, 0.03);
@@ -24,16 +24,17 @@ function init() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     document.body.appendChild(renderer.domElement);
 
-    // Add a pulsing center core for visual flair
+    // Dynamic Central Shape Core Element
     const coreGeo = new THREE.IcosahedronGeometry(2, 1);
     const coreMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
     centerMesh = new THREE.Mesh(coreGeo, coreMat);
     scene.add(centerMesh);
 
-    // UI NODE BINDINGS
+    // UI RUNTIME INTERACTION BINDINGS
     const fileInput = document.getElementById('upload');
     const startSyncBtn = document.getElementById('start-sync-btn');
     const playPreviewBtn = document.getElementById('play-preview-btn');
+    const exportBtn = document.getElementById('export-btn');
 
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
@@ -46,6 +47,7 @@ function init() {
 
     startSyncBtn.addEventListener('click', launchRecordSession);
     playPreviewBtn.addEventListener('click', startFinalPlaybackMode);
+    exportBtn.addEventListener('click', exportLRCFile);
 
     window.addEventListener('keydown', handleKeyPress);
     window.addEventListener('resize', onWindowResize);
@@ -91,7 +93,6 @@ function handleKeyPress(e) {
     if (systemMode === "RECORDING") {
         e.preventDefault();
         
-        // Save the precise sync point timestamp
         databaseTimeline.push({
             time: audio.currentTime,
             text: lyricLines[currentLineIndex]
@@ -100,12 +101,11 @@ function handleKeyPress(e) {
         currentLineIndex++;
 
         if (currentLineIndex >= lyricLines.length) {
-            // Finished stamping lines
             systemMode = "IDLE";
             audio.pause();
             document.getElementById('tap-instruction').style.display = 'none';
             document.getElementById('post-sync-controls').style.display = 'block';
-            document.getElementById('lyric-screen').innerText = "Timeline Saved Successfully!";
+            document.getElementById('lyric-screen').innerText = "Timeline Stamped Successfully!";
         } else {
             showRecordingCue();
         }
@@ -118,18 +118,36 @@ function startFinalPlaybackMode() {
     
     systemMode = "PLAYBACK";
     
-    // 1. Fully reload the audio object to reset its buffer state
+    // Fresh Audio Context instantiation loop wrapper fix
     audio = new Audio(audioURL);
-    
-    // 2. Re-attach the visualizer analyzer to the fresh audio instance
     attachAudioAnalyser(audio);
     
-    // 3. Play it from a clean slate
     audio.currentTime = 0;
     audio.play();
 }
 
+function exportLRCFile() {
+    let lrcOutputArray = [];
+    
+    databaseTimeline.forEach(item => {
+        const minutes = Math.floor(item.time / 60).toString().padStart(2, '0');
+        const seconds = Math.floor(item.time % 60).toString().padStart(2, '0');
+        const hundredths = Math.floor((item.time % 1) * 100).toString().padStart(2, '0');
+        
+        lrcOutputArray.push(`[${minutes}:${seconds}.${hundredths}]${item.text}`);
+    });
+
+    const lrcContent = lrcOutputArray.join('\n');
+    const blob = new Blob([lrcContent], { type: 'text/plain' });
+    const link = document.createElement('a');
+    
+    link.download = `${document.getElementById('song-title').innerText}.lrc`;
+    link.href = window.URL.createObjectURL(blob);
+    link.click();
+}
+
 function attachAudioAnalyser(audioElement) {
+    // If context structure exists old analyzer nodes map targets safely run cleanup
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const source = ctx.createMediaElementSource(audioElement);
     analyser = ctx.createAnalyser();
@@ -143,7 +161,6 @@ function animate() {
     requestAnimationFrame(animate);
     const elapsed = clock.getElapsedTime();
 
-    // 3D GRAPHICS BEAT REACTIVITY
     let bass = 0;
     if (analyser) {
         analyser.getByteFrequencyData(dataArray);
@@ -154,12 +171,10 @@ function animate() {
     centerMesh.rotation.x = elapsed * 0.3;
     centerMesh.rotation.y = elapsed * 0.5;
 
-    // PLAYBACK ENGINE TIME TRACKING
     if (systemMode === "PLAYBACK" && audio) {
         const timeNow = audio.currentTime;
         let activeText = "";
 
-        // Trace line events matching current time bracket
         for (let i = 0; i < databaseTimeline.length; i++) {
             if (timeNow >= databaseTimeline[i].time) {
                 activeText = databaseTimeline[i].text;
@@ -171,7 +186,6 @@ function animate() {
             screenNode.innerHTML = `<span class="video-rendered-text">${activeText}</span>`;
         }
         
-        // Loop restart/stop handler cleanly
         if (audio.ended) {
             systemMode = "IDLE";
             document.getElementById('post-sync-controls').style.display = 'block';

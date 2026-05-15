@@ -114,9 +114,17 @@ function handleKeyPress(e) {
 
 function startFinalPlaybackMode() {
     document.getElementById('post-sync-controls').style.display = 'none';
-    document.getElementById('tap-instruction').style.display = 'none'; // Ensure fully hidden
+    document.getElementById('tap-instruction').style.display = 'none'; 
     
     systemMode = "PLAYBACK";
+    
+    // 1. Fully reload the audio object to reset its buffer state
+    audio = new Audio(audioURL);
+    
+    // 2. Re-attach the visualizer analyzer to the fresh audio instance
+    attachAudioAnalyser(audio);
+    
+    // 3. Play it from a clean slate
     audio.currentTime = 0;
     audio.play();
 }
